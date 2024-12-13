@@ -6,16 +6,21 @@ module Enterprise::Inbox
   end
 
   def get_responses(query)
+    return [] unless account.feature_enabled?('response_bot')
+    
     embedding = Openai::EmbeddingsService.new.get_embedding(query)
     responses.active.nearest_neighbors(:embedding, embedding, distance: 'cosine').first(5)
   end
 
   def active_bot?
+    # Call super first to check for other bot types (like agent_bot, dialogflow, etc.)
     super || response_bot_enabled?
   end
 
   def response_bot_enabled?
-    account.feature_enabled?('response_bot') && response_sources.any?
+    # Simply check the feature flag - don't try to access response_sources
+    # This way, the feature can be cleanly disabled without errors
+    account.feature_enabled?('response_bot')
   end
 
   private
