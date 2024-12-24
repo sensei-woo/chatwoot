@@ -49,7 +49,7 @@ class Public::Api::V1::Inboxes::MessagesController < Public::Api::V1::InboxesCon
   end
 
   def permitted_params
-    params.permit(:content, :echo_id)
+    params.permit(:content, :echo_id, content_attributes: [:in_reply_to])
   end
 
   def set_message
@@ -63,6 +63,7 @@ class Public::Api::V1::Inboxes::MessagesController < Public::Api::V1::InboxesCon
       content: permitted_params[:content],
       inbox_id: @conversation.inbox_id,
       echo_id: permitted_params[:echo_id],
+      content_attributes: permitted_params[:content_attributes],
       message_type: :incoming
     }
   end
